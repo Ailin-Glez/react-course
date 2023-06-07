@@ -1,7 +1,13 @@
 import { useState } from "react";
 
-import { Expense } from "./expense-model";
 import ExpenseFilter from "./ExpenseFilter";
+
+type Expense = {
+  id: number;
+  description: string;
+  amount: number;
+  category: string;
+};
 
 type Props = {
   expenses: Expense[];
@@ -12,11 +18,10 @@ function ExpenseList({ expenses, onDelete }: Props) {
   const [categorySelected, setCategorySelected] = useState("All");
   if (expenses.length === 0) return <h4>No Expenses. You can add a new Expense by entering the values above</h4>;
   const expensesFiltered = expenses.filter((e) => (categorySelected !== "All" ? e.category === categorySelected : e));
-  const total = expensesFiltered.reduce((acc, expense) => expense.amount + acc, 0).toFixed(2);
+  const total = expensesFiltered.reduce((acc, expense) => expense.amount + acc, 0);
 
   return (
-    <>
-      <h3>All Expenses</h3>
+    <section className="list-container">
       <ExpenseFilter handleSelection={(cat) => setCategorySelected(cat)} />
       {expensesFiltered.length === 0 ? (
         <p>No Expenses register for the selected category</p>
@@ -36,7 +41,7 @@ function ExpenseList({ expenses, onDelete }: Props) {
               return (
                 <tr key={id}>
                   <td>{description}</td>
-                  <td>{amount}</td>
+                  <td>${amount.toLocaleString("en-US")}</td>
                   <td>{category}</td>
                   <td>
                     <button onClick={() => onDelete(id)} style={{ backgroundColor: "firebrick" }}>
@@ -49,15 +54,13 @@ function ExpenseList({ expenses, onDelete }: Props) {
           </tbody>
           <tfoot>
             <tr>
-              <b>
-                <td>TOTAL</td>
-              </b>
-              <td>${total}</td>
+              <td style={{ fontWeight: "bold" }}>TOTAL</td>
+              <td>${total.toLocaleString("en-US")}</td>
             </tr>
           </tfoot>
         </table>
       )}
-    </>
+    </section>
   );
 }
 
